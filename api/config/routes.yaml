@@ -1,0 +1,14 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+# Configuration spécifique pour le login
+api_login_check:
+    path: /api/login_check
+api_logout:
+    path: /api/logout
+    methods: ['POST']
+api_progressions:
+  path: /api/progressions

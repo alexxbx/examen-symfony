@@ -1,0 +1,20 @@
+user_list:
+    path: /api/users
+    methods: GET
+    controller: App\Controller\UserController::index
+user_show:
+    path: /api/users/{id}
+    methods: GET
+    controller: App\Controller\UserController::show
+user_create:
+    path: /api/register
+    methods: POST
+    controller: App\Controller\UserController::create
+user_update:
+    path: /api/users/{id}
+    methods: [PUT, PATCH]
+    controller: App\Controller\UserController::update
+user_delete:
+    path: /api/users/{id}
+    methods: DELETE
+    controller: App\Controller\UserController::delete
