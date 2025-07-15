@@ -9,9 +9,11 @@ RUN apt-get update && apt-get install -y \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
 
-# Installe le binaire symfony
-RUN curl -sS https://get.symfony.com/cli/installer | bash && \
-    mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+# Installe le binaire symfony via archive officielle
+RUN wget https://github.com/symfony/cli/releases/latest/download/symfony_linux_amd64.tar.gz \
+    && tar -xzf symfony_linux_amd64.tar.gz \
+    && mv symfony /usr/local/bin/symfony \
+    && rm symfony_linux_amd64.tar.gz
 RUN symfony --version
 
 WORKDIR /app
