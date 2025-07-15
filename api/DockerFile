@@ -11,7 +11,7 @@ RUN composer --version
 
 # Installe le binaire symfony
 RUN curl -sS https://get.symfony.com/cli/installer | bash && \
-    mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+    mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 RUN symfony --version
 
 WORKDIR /app
