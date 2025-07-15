@@ -84,6 +84,18 @@ class ProgressionRepository extends ServiceEntityRepository
         ->getResult();
 }
 
+    public function getLessonsLeaderboard(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('u.id as userId, u.username, COUNT(p.id) as lessonsCompleted')
+            ->join('p.user', 'u')
+            ->where('p.completed = true')
+            ->groupBy('u.id')
+            ->orderBy('lessonsCompleted', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     public function save(Progression $progression): void
     {

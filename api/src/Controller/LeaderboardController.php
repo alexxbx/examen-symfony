@@ -113,4 +113,11 @@ class LeaderboardController extends AbstractController
 
         return new JsonResponse(['message' => 'Classement mis à jour avec succès']);
     }
+
+    #[Route('/api/lessons-leaderboard', name: 'lessons_leaderboard', methods: ['GET'])]
+    public function lessonsLeaderboard(\App\Repository\ProgressionRepository $progressionRepository): JsonResponse
+    {
+        $leaderboard = $progressionRepository->getLessonsLeaderboard();
+        return $this->json($leaderboard);
+    }
 } 
