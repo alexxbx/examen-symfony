@@ -12,6 +12,7 @@ RUN composer --version
 # Installe le binaire symfony via archive officielle
 RUN wget https://github.com/symfony-cli/symfony-cli/releases/latest/download/symfony-cli_linux_amd64.tar.gz \
     && tar -xzf symfony-cli_linux_amd64.tar.gz \
+    && ls -l \
     && chmod +x symfony-cli \
     && mv symfony-cli /usr/local/bin/symfony \
     && rm symfony-cli_linux_amd64.tar.gz
