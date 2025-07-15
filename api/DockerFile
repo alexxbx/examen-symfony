@@ -2,7 +2,7 @@ FROM php:8.2-cli
 
 # Installe les extensions nécessaires
 RUN apt-get update && apt-get install -y \
-    git unzip zip libpq-dev libonig-dev libxml2-dev curl \
+    git unzip zip libpq-dev libonig-dev libxml2-dev curl bash wget tar \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Installe Composer
