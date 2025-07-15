@@ -15,7 +15,7 @@ RUN wget https://github.com/symfony-cli/symfony-cli/releases/latest/download/sym
     && chmod +x symfony \
     && mv symfony /usr/local/bin/symfony \
     && rm symfony-cli_linux_amd64.tar.gz
-RUN symfony --version
+# RUN symfony --version
 
 WORKDIR /app
 
