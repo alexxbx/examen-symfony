@@ -1,0 +1,17 @@
+services:
+  - type: web
+    runtime: docker
+    name: symfony-api
+    plan: free
+    autoDeploy: true
+    branch: main
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        value: UnSuperSecret
+      - key: CORS_ALLOW_ORIGIN
+        value: https://examen-react.vercel.app
+      - key: DATABASE_URL
+        sync: false  # à configurer manuellement dans Render pour ne pas exposer le mot de passe
