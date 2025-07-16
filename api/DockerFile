@@ -12,14 +12,11 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Copier les fichiers Composer en premier (pour le cache Docker)
-COPY composer.json composer.lock ./
+# Copier tout le code source dans l'image
+COPY . .
 
 # Installer les dépendances PHP (sans scripts pour éviter les erreurs liées à Symfony CLI)
 RUN composer install --no-interaction --optimize-autoloader --no-scripts --no-dev
-
-# Copier tout le reste du code Symfony
-COPY . .
 
 # Ouvrir le port 10000 (utilisé par Render)
 EXPOSE 10000
