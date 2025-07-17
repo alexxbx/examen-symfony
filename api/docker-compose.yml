@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  symfony:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: symfony_app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www
+    ports:
+      - "9000:9000"
+    environment:
+      APP_ENV: prod
