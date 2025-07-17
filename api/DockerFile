@@ -1,43 +1,36 @@
-FROM php:8.2-cli
+FROM php:8.2-fpm
 
-# Installer les dépendances système
+# 1. Installer les dépendances système nécessaires
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml tokenizer fileinfo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configurer les extensions nécessaires (certaines ont besoin de config avant build)
-RUN docker-php-ext-configure intl
+# 2. Installer Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Installer les extensions PHP nécessaires
-RUN docker-php-ext-install \
-    pdo \
-    pdo_pgsql \
-    zip \
-    intl \
-    dom \
-    mbstring \
-    xml \
-    simplexml
+# 3. Créer un dossier pour l’application
+WORKDIR /app
 
-# Installer Composer (globalement dans le conteneur)
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer
+# 4. Copier les fichiers nécessaires pour installer les dépendances (composer.lock en priorité)
+COPY composer.json composer.lock symfony.lock ./
 
-# Définir le dossier de travail
-WORKDIR /api
+# 5. Installer les dépendances PHP (sans les scripts pour éviter les erreurs en root)
+RUN composer install --no-interaction --optimize-autoloader --no-scripts
 
-# Copier uniquement les fichiers nécessaires au début pour éviter de rebuilder à chaque changement
-COPY composer.json composer.lock ./
-
-# Installer les dépendances sans les scripts (sinon cache:clear échoue à cause des dev bundles)
-RUN composer install
-
-# Copier tout le reste (après installation des dépendances, pour profiter du cache Docker)
+# 6. Copier le reste du code de l’application
 COPY . .
 
-# Exposer le port utilisé par le serveur PHP (Render ou local)
-EXPOSE 10000
+# 7. (Optionnel) Lancer un script d’init Symfony à la place de auto-scripts
+#    Tu peux créer un fichier `init.sh` contenant :
+#    php bin/console cache:clear --no-warmup
+#    php bin/console assets:install public
+#    chmod +x init.sh
+#    Et ajouter ici : RUN ./init.sh
 
-# Par défaut, le conteneur se lance avec PHP en mode serveur local
-CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
+# 8. Exposer un port (si tu utilises un serveur HTTP comme Caddy ou Nginx à côté)
+EXPOSE 8000
+
+# 9. Lancer PHP-FPM par défaut
+CMD ["php-fpm"]
