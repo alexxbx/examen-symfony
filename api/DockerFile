@@ -1,18 +1,24 @@
 FROM php:8.2-cli
 
+# Installer les dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
     git unzip zip libpq-dev libonig-dev libxml2-dev curl libzip-dev \
     && docker-php-ext-install pdo pdo_pgsql zip
 
-RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/composer
+# Installer Composer (avec les bons droits)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
+# Copier le code source dans l'image
 COPY . .
 
+# Installer les dépendances PHP
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
+# Exposer le port 10000 (utilisé par Render)
 EXPOSE 10000
 
+# Lancer le serveur PHP intégré
 CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
