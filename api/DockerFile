@@ -25,7 +25,7 @@ RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Définir le dossier de travail
-WORKDIR /app
+WORKDIR /api
 
 # Copier uniquement les fichiers nécessaires au début pour éviter de rebuilder à chaque changement
 COPY composer.json composer.lock ./
