@@ -16,7 +16,7 @@ WORKDIR /app
 COPY . .
 
 # Installer les dépendances PHP (sans scripts pour éviter les erreurs liées à Symfony CLI)
-RUN composer install --no-interaction --optimize-autoloader --no-scripts --no-dev
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Ouvrir le port 10000 (utilisé par Render)
 EXPOSE 10000
