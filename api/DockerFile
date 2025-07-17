@@ -1,24 +1,43 @@
 FROM php:8.2-cli
 
-# Installer les dépendances système et extensions PHP
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
-    git unzip zip libpq-dev libonig-dev libxml2-dev curl libzip-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
+    libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installer Composer (avec les bons droits)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Configurer les extensions nécessaires (certaines ont besoin de config avant build)
+RUN docker-php-ext-configure intl
 
-# Définir le répertoire de travail dans le conteneur
+# Installer les extensions PHP nécessaires
+RUN docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    zip \
+    intl \
+    dom \
+    mbstring \
+    xml \
+    simplexml
+
+# Installer Composer (globalement dans le conteneur)
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Définir le dossier de travail
 WORKDIR /app
 
-# Copier le code source dans l'image
+# Copier uniquement les fichiers nécessaires au début pour éviter de rebuilder à chaque changement
+COPY composer.json composer.lock ./
+
+# Installer les dépendances sans les scripts (sinon cache:clear échoue à cause des dev bundles)
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
+
+# Copier tout le reste (après installation des dépendances, pour profiter du cache Docker)
 COPY . .
 
-# Installer les dépendances PHP
-RUN composer install --no-interaction --optimize-autoloader --no-dev
-
-# Exposer le port 10000 (utilisé par Render)
+# Exposer le port utilisé par le serveur PHP (Render ou local)
 EXPOSE 10000
 
-# Lancer le serveur PHP intégré
+# Par défaut, le conteneur se lance avec PHP en mode serveur local
 CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
