@@ -31,7 +31,7 @@ WORKDIR /api
 COPY composer.json composer.lock ./
 
 # Installer les dépendances sans les scripts (sinon cache:clear échoue à cause des dev bundles)
-RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Copier tout le reste (après installation des dépendances, pour profiter du cache Docker)
 COPY . .
