@@ -23,8 +23,5 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # 6. Créer un user www-data (évite les problèmes de permission)
 RUN chown -R www-data:www-data /var/www
 
-# 7. Exposer le port pour le serveur PHP
-EXPOSE 9000
-
-# 8. Commande de démarrage
-CMD ["php-fpm"]
+EXPOSE 10000
+CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
