@@ -1,27 +1,29 @@
-FROM php:8.2-fpm
+FROM php:8.4-apache
 
-# 1. Installer les dépendances système
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
-    git unzip zip curl libpq-dev libzip-dev libonig-dev \
-    libxml2-dev libicu-dev zlib1g-dev libcurl4-openssl-dev \
-    libssl-dev libxslt1-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip intl mbstring xml \
+    git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
+    libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Installer Composer
+# Activer mod_rewrite d'Apache
+RUN a2enmod rewrite
+
+# Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# 3. Définir le dossier de travail
 WORKDIR /var/www
 
-# 4. Copier les fichiers de l'application
-COPY . .
+# Copier composer.json et composer.lock d'abord pour profiter du cache Docker
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-interaction --optimize-autoloader --no-dev || true
 
-# 5. Installer les dépendances PHP (en mode production)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Copier le reste du code
+COPY . ./
 
-# 6. Créer un user www-data (évite les problèmes de permission)
+# Donner les bons droits
 RUN chown -R www-data:www-data /var/www
 
-EXPOSE 10000
-CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
+# Configuration Apache
+COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
