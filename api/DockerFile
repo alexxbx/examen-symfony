@@ -1,38 +1,18 @@
 FROM php:8.2-apache
 
-# Installer les extensions nécessaires
+WORKDIR /var/www/
+
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+ && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml tokenizer fileinfo \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Activer mod_rewrite
-RUN a2enmod rewrite \
-&& echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-
-# Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Définir le dossier de travail
-WORKDIR /var/www
+COPY . /var/www/
 
-# Copier uniquement composer.json et composer.lock d'abord
-COPY composer.json composer.lock ./
+RUN composer install --no-interaction --optimize-autoloader
 
-# Installer les dépendances (PROD)
-RUN composer install --no-dev --optimize-autoloader
-
-# Copier tout le reste
-COPY . .
-
-# Changer le DocumentRoot pour Symfony
-ENV APACHE_DOCUMENT_ROOT=/var/www/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-
-# Droits corrects
-RUN chown -R www-data:www-data /var/www
-
-EXPOSE 80
-CMD ["apache2-foreground"]
+RUN a2enmod rewrite \
+ && echo "ServerName localhost" >> /etc/apache2/apache2.conf
