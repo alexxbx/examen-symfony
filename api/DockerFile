@@ -3,11 +3,11 @@ FROM php:8.2-apache
 # Active mod_rewrite
 RUN a2enmod rewrite
 
-# Dossier de travail racine
-WORKDIR /var/www
+# Définit le dossier de travail final dans le conteneur
+WORKDIR /var/www/api
 
-# Copie le dossier api dans le conteneur
-COPY ./api /var/www/api
+# Copie le contenu du contexte de build (le dossier 'api') dans le WORKDIR
+COPY . .
 
 # Installe les dépendances système
 RUN apt-get update && apt-get install -y \
@@ -19,14 +19,15 @@ RUN apt-get update && apt-get install -y \
 # Installe Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Change le dossier de travail pour le projet Symfony
-WORKDIR /var/www/api
-
 # Installe les dépendances Symfony
+# Cette commande est maintenant exécutée dans /var/www/api car c'est le WORKDIR
 RUN composer install --no-dev --optimize-autoloader
 
-# Configure Apache pour Symfony (DocumentRoot = public/)
+# Configure Apache pour Symfony
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Donne les bons droits
-RUN chown -R www-data:www-data /var/www
+# Donne les bons droits (ciblé sur les dossiers qui en ont besoin)
+RUN chown -R www-data:www-data /var/www/api/var /var/www/api/public
+
+# Expose le port 80 pour Apache
+EXPOSE 80
