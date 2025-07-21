@@ -1,35 +1,26 @@
 FROM php:8.2-apache
 
-# Active mod_rewrite
 RUN a2enmod rewrite
 
-# Définit le dossier de travail final dans le conteneur
 WORKDIR /var/www/api
 
-# Autoriser Composer à s'exécuter en tant que root
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copie tout le contenu du dossier api/ dans le conteneur
-COPY . .
+# Copie le contenu du dossier api/ du repo dans le conteneur
+COPY ./api/. ./
 
-# Installe les dépendances système
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
- && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
+&& docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
+&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installe Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Installe les dépendances Symfony
 RUN composer install --no-dev --optimize-autoloader
 
-# Configure Apache pour Symfony
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Donne les bons droits (ciblé sur les dossiers qui en ont besoin)
 RUN chown -R www-data:www-data /var/www/api/var /var/www/api/public
 
-# Expose le port 80 pour Apache
 EXPOSE 80
