@@ -14,16 +14,18 @@ RUN a2enmod rewrite
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+COPY . /var/www
 
 # Copier composer.json et composer.lock d'abord pour profiter du cache Docker
 COPY composer.json composer.lock ./
-RUN composer install --no-scripts --no-interaction --optimize-autoloader --no-dev || true
+# Installer les dépendances PHP avec Composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Copier le reste du code
-COPY . ./
-
-# Donner les bons droits
+# Changer les droits si besoin
 RUN chown -R www-data:www-data /var/www
 
-# Configuration Apache
-COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+# Utiliser le dossier public comme DocumentRoot
+ENV APACHE_DOCUMENT_ROOT /var/www/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+
+EXPOSE 80

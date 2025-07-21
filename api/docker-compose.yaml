@@ -2,26 +2,19 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: symfony-app
-    restart: unless-stopped
     ports:
       - "8000:80"
     volumes:
       - .:/var/www
     depends_on:
-      - database
+      - database  
 
   database:
     image: postgres:15
-    container_name: symfony-db
-    restart: unless-stopped
     environment:
       POSTGRES_DB: symfony
       POSTGRES_USER: symfony
       POSTGRES_PASSWORD: symfony
-    ports:
-      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
