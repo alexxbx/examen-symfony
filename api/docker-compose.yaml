@@ -4,8 +4,10 @@ services:
       context: .
     ports:
       - "8000:80"
+    volumes:
+      - .:/var/www
     depends_on:
-      - database
+      - database  
 
   database:
     image: postgres:15

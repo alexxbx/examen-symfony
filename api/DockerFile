@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Dépendances système
+# Installer les extensions nécessaires
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Activer mod_rewrite
-RUN a2enmod rewrite
+RUN a2enmod rewrite \
+&& echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -16,17 +18,21 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Définir le dossier de travail
 WORKDIR /var/www
 
-# Copier tout le code dans l'image
-COPY . .
+# Copier uniquement composer.json et composer.lock d'abord
+COPY composer.json composer.lock ./
 
-# Installer les dépendances PHP
+# Installer les dépendances (PROD)
 RUN composer install --no-dev --optimize-autoloader
 
-# Définir le DocumentRoot
-ENV APACHE_DOCUMENT_ROOT /var/www/public
+# Copier tout le reste
+COPY . .
+
+# Changer le DocumentRoot pour Symfony
+ENV APACHE_DOCUMENT_ROOT=/var/www/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
-# Droits
+# Droits corrects
 RUN chown -R www-data:www-data /var/www
 
 EXPOSE 80
+CMD ["apache2-foreground"]

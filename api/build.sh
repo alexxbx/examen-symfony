@@ -1,10 +1,5 @@
 #!/bin/bash
-
 set -e
 
-# Affiche les fichiers pour debug
-echo "Listing contents:"
-ls -al
-
-# Installation des dépendances PHP
+echo "🔧 Install des dépendances PHP via Composer"
 composer install --no-dev --optimize-autoloader
