@@ -5,6 +5,8 @@ services:
     plan: free
     autoDeploy: true
     branch: main
+    buildCommand: ./build.sh
+    startCommand: apache2-foreground
     dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_ENV
