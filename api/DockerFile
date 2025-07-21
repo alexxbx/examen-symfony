@@ -3,27 +3,30 @@ FROM php:8.2-apache
 # Active mod_rewrite
 RUN a2enmod rewrite
 
-# Définit le dossier de travail
+# Dossier de travail racine
 WORKDIR /var/www
 
-# Copie tout le projet Symfony dans le conteneur
-COPY . /var/www
+# Copie le dossier api dans le conteneur
+COPY ./api /var/www/api
 
-# Installe les dépendances PHP (ajuste en fonction de ton besoin)
+# Installe les dépendances système
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
  && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installe Composer (si besoin)
+# Installe Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Change le dossier de travail pour le projet Symfony
+WORKDIR /var/www/api
 
 # Installe les dépendances Symfony
 RUN composer install --no-dev --optimize-autoloader
 
 # Configure Apache pour Symfony (DocumentRoot = public/)
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/public|g' /etc/apache2/sites-available/000-default.conf
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Donne les bons droits
 RUN chown -R www-data:www-data /var/www
