@@ -21,6 +21,6 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
 
-RUN chown -R www-data:www-data /var/www/api/var /var/www/api/public
+RUN mkdir -p /var/www/api/var /var/www/api/public && chown -R www-data:www-data /var/www/api/var /var/www/api/public
 
 EXPOSE 80
