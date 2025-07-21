@@ -1,30 +1,34 @@
-FROM php:8.4-apache
+FROM php:8.3-apache
 
-# Installer les dépendances système
+# Dépendances système
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
     && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Activer mod_rewrite d'Apache
+# Activer mod_rewrite Apache
 RUN a2enmod rewrite
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Définir le dossier de travail
 WORKDIR /var/www
-COPY . /var/www
 
-# Copier composer.json et composer.lock d'abord pour profiter du cache Docker
+# Copier uniquement composer.json et composer.lock d'abord (pour le cache Docker)
 COPY composer.json composer.lock ./
-# Installer les dépendances PHP avec Composer
+
+# Installer les dépendances PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Changer les droits si besoin
+# Copier le reste des fichiers de l’application
+COPY . .
+
+# Droits pour Apache
 RUN chown -R www-data:www-data /var/www
 
-# Utiliser le dossier public comme DocumentRoot
+# Définir le dossier public comme DocumentRoot
 ENV APACHE_DOCUMENT_ROOT /var/www/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
