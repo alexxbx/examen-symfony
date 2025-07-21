@@ -5,7 +5,7 @@ WORKDIR /var/www/
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
- && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml tokenizer fileinfo \
+ && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
