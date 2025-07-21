@@ -9,11 +9,8 @@ WORKDIR /var/www/api
 # Autoriser Composer à s'exécuter en tant que root
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copie d'abord composer.json et composer.lock
-COPY composer.json composer.lock ./
-
-# Debug - Vérifie que composer.json a été copié
-RUN ls -la /var/www/api/composer.json
+# Copie tout le contenu du dossier api/ dans le conteneur
+COPY . .
 
 # Installe les dépendances système
 RUN apt-get update && apt-get install -y \
@@ -26,10 +23,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Installe les dépendances Symfony
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Copie le reste des fichiers
-COPY . .
+RUN composer install --no-dev --optimize-autoloader
 
 # Configure Apache pour Symfony
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
