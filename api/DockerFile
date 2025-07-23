@@ -11,6 +11,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copie le contenu du dossier api/ du repo dans le conteneur
 COPY . ./
+COPY .env .env
 
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
