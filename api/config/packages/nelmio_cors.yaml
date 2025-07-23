@@ -2,12 +2,12 @@ nelmio_cors:
     defaults:
         allow_credentials: true
         allow_origin: ['http://localhost:3000', 'https://manabu-app.vercel.app', 'https://examen-symfony.onrender.com']
-        allow_headers: ['Content-Type', 'Authorization']
-        expose_headers: ['Link', 'Content-Type']
+        allow_headers: ['*']
         allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+        expose_headers: ['Link', 'Content-Type']
         max_age: 3600
     paths:
         '^/api/':
             allow_origin: ['http://localhost:3000', 'https://manabu-app.vercel.app', 'https://examen-symfony.onrender.com']
-            allow_headers: ['Content-Type', 'Authorization']
+            allow_headers: ['*']
             allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']

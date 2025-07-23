@@ -7,7 +7,8 @@ WORKDIR /var/www/api
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Copie le contenu du dossier api/ du repo dans le conteneur
-COPY ./api/. ./
+COPY . ./
+
 
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
