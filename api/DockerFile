@@ -6,18 +6,16 @@ WORKDIR /var/www/api
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copie le binaire Composer dans l'image
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
 # Copie le contenu du dossier api/ du repo dans le conteneur
-COPY . ./
-COPY .env .env
+COPY ./api/. ./
 
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
 && docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN composer install --no-dev --optimize-autoloader
 
