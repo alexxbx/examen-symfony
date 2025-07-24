@@ -1,26 +1,25 @@
 FROM php:8.2-apache
 
+# Installe les extensions PHP nécessaires
+RUN docker-php-ext-install pdo pdo_mysql
+
+# Active mod_rewrite pour Symfony
 RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+# Copie le code dans le conteneur
+WORKDIR /var/www/api
+COPY . .
 
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Copie le contenu du dossier api/ du repo dans le conteneur
-COPY ./api/. ./
-
-RUN apt-get update && apt-get install -y \
-    git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
-    libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
-&& docker-php-ext-install pdo pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
-&& apt-get clean && rm -rf /var/lib/apt/lists/*
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-RUN composer install --no-dev --optimize-autoloader
-
+# Configure Apache pour servir le dossier public
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /etc/apache2/sites-available/000-default.conf
 
-RUN mkdir -p /var/www/api/var /var/www/api/public && chown -R www-data:www-data /var/www/api/var /var/www/api/public
+# Ajoute index.php comme DirectoryIndex
+RUN echo "DirectoryIndex index.php" >> /etc/apache2/apache2.conf
 
+# Donne les bons droits
+RUN chown -R www-data:www-data /var/www/api
+
+# Expose le port 80
 EXPOSE 80
+
+CMD ["apache2-foreground"]
