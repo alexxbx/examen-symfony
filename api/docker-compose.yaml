@@ -11,3 +11,12 @@ services:
         composer install --no-interaction --optimize-autoloader &&
         apache2-foreground
       "
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - "3306:3306"
