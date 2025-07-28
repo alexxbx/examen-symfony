@@ -12,3 +12,7 @@ api_logout:
     methods: ['POST']
 api_progressions:
   path: /api/progressions
+lexik_jwt_authentication_login:
+    path: /login_check
+    methods: [POST]
+    controller: lexik_jwt_authentication.controller.authentication::getToken
