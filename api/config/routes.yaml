@@ -5,7 +5,7 @@ controllers:
     type: attribute
 
 lexik_jwt_authentication:
-    resource: "@LexikJWTAuthenticationBundle/config/routes.yaml"
+    resource: "@LexikJWTAuthenticationBundle/Resources/config/routing.yaml"
     prefix: /api
 
 api_logout:
