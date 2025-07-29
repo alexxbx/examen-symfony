@@ -6,7 +6,7 @@ services:
     autoDeploy: true
     branch: main
     startCommand: apache2-foreground
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./api/Dockerfile
     envVars:
       - key: APP_ENV
         value: prod
