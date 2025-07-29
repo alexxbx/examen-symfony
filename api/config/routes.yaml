@@ -8,7 +8,7 @@ controllers:
 api_login_check:
     path: /api/login_check
     methods: [POST]
-    controller: lexik_jwt_authentication.controller.authentication::getToken
+    controller: Lexik\Bundle\JWTAuthenticationBundle\Controller\AuthenticationController::getToken
 
 api_logout:
     path: /api/logout
