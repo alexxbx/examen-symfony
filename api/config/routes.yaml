@@ -4,9 +4,11 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-lexik_jwt_authentication:
-    resource: "@LexikJWTAuthenticationBundle/Resources/config/routing.yaml"
-    prefix: /api
+# Route manuelle pour JWT login
+api_login_check:
+    path: /api/login_check
+    methods: [POST]
+    controller: lexik_jwt_authentication.controller.authentication::getToken
 
 api_logout:
     path: /api/logout
