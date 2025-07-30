@@ -12,7 +12,7 @@ COPY ./api/. ./
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
-    default-mysql-client libmysqlclient-dev \
+    mariadb-client libmariadb-dev \
 && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
