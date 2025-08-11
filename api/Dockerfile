@@ -28,3 +28,5 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/api/public|g' /et
 RUN mkdir -p /var/www/api/var /var/www/api/public && chown -R www-data:www-data /var/www/api/var /var/www/api/public
 
 EXPOSE 80
+
+CMD ["sh", "/var/www/api/bin/start.sh"]
