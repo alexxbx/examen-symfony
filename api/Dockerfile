@@ -12,9 +12,12 @@ COPY ./api/. ./
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpq-dev libonig-dev libxml2-dev libzip-dev \
     libicu-dev zlib1g-dev libcurl4-openssl-dev libssl-dev libxslt1-dev \
-    mariadb-client libmariadb-dev \
+    mariadb-client libmariadb-dev dos2unix \
 && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip intl dom mbstring xml simplexml fileinfo \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Normalise les fins de ligne et rend exécutables les scripts
+RUN dos2unix bin/console bin/start.sh || true && chmod +x bin/console bin/start.sh || true
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
