@@ -20,6 +20,10 @@ security:
 
     access_control:
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/test, roles: PUBLIC_ACCESS }
+        - { path: ^/api/test-users, roles: PUBLIC_ACCESS }
+        - { path: ^/api/test-jwt, roles: PUBLIC_ACCESS }
         - { path: ^/api/users$, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
