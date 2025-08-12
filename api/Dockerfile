@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Normalise les fins de ligne et rend exécutables les scripts
-RUN dos2unix bin/console bin/start.sh || true && chmod +x bin/console bin/start.sh || true
+RUN dos2unix bin/console bin/start.sh bin/start-fallback.sh || true && chmod +x bin/console bin/start.sh bin/start-fallback.sh || true
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -29,4 +29,4 @@ RUN mkdir -p /var/www/api/var /var/www/api/public && chown -R www-data:www-data 
 
 EXPOSE 80
 
-CMD ["sh", "/var/www/api/bin/start.sh"]
+CMD ["sh", "/var/www/api/bin/start-fallback.sh"]

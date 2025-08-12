@@ -11,7 +11,10 @@ done
 echo "Database is ready, checking migration status..."
 php bin/console doctrine:migrations:status
 
-echo "Running migrations..."
+echo "Running cleanup migration first..."
+php bin/console doctrine:migrations:execute --up "DoctrineMigrations\Version20250812121700" --no-interaction
+
+echo "Running all migrations..."
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
 echo "Starting Apache..."
