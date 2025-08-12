@@ -9,6 +9,15 @@ security:
                 property: username
 
     firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        
+        public:
+            pattern: ^/api/(register|login|test|test-users|test-jwt)
+            stateless: true
+            security: false
+        
         api:
             pattern: ^/api
             stateless: true
@@ -19,11 +28,5 @@ security:
                 invalidate_session: false
 
     access_control:
-        - { path: ^/api/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
-        - { path: ^/api/test, roles: PUBLIC_ACCESS }
-        - { path: ^/api/test-users, roles: PUBLIC_ACCESS }
-        - { path: ^/api/test-jwt, roles: PUBLIC_ACCESS }
         - { path: ^/api/users$, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
