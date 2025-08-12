@@ -16,6 +16,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     denormalizationContext: ['groups' => ['user:write']]
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '"user"')]
 #[ORM\UniqueConstraint(fields: ['username'], name: 'unique_username')]
 #[ORM\UniqueConstraint(fields: ['email'], name: 'unique_email')]
 
