@@ -19,17 +19,12 @@ final class Version20250514084144 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE exercise ADD cours LONGTEXT DEFAULT NULL
-        SQL);
+        $this->addSql('ALTER TABLE exercise ADD COLUMN cours TEXT DEFAULT NULL');
     }
-
+    
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE exercise DROP cours
-        SQL);
+        $this->addSql('ALTER TABLE exercise DROP COLUMN cours');
     }
+    
 }
