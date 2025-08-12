@@ -21,4 +21,4 @@ services:
       - key: JWT_PUBLIC_KEY
         value: /var/www/api/config/jwt/public.pem
       - key: JWT_PASSPHRASE
-        value: your_jwt_passphrase_here
+        value: 1408
