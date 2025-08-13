@@ -4,13 +4,15 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-class AuthController
+class AuthController extends AbstractController
 {
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
     public function login(
@@ -32,6 +34,7 @@ class AuthController
 
         if (
             !$user
+            || !$user instanceof UserInterface
             || !$user instanceof PasswordAuthenticatedUserInterface
             || !$passwordHasher->isPasswordValid($user, $password)
         ) {
@@ -42,4 +45,4 @@ class AuthController
 
         return new JsonResponse(['token' => $token]);
     }
-} 
+}
